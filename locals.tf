@@ -6,4 +6,4 @@ locals {
     environment  = terraform.workspace
     creationTime = timestamp()
   }
-}
+} 
