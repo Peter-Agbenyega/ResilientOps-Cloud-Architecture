@@ -2,8 +2,8 @@ locals {
   project_tags = {
     contact      = "admin@nexuscloud360.com"
     application  = "networking"
-    project      = "terraform-enterprise-lab"
-    environment  = "${terraform.workspace}" # dev, prod, etc
+    project      = "ResilientOps-Cloud-Architecture"
+    environment  = terraform.workspace
     creationTime = timestamp()
   }
 }
