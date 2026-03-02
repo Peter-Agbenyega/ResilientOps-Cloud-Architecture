@@ -43,3 +43,9 @@ variable "instance_type" {
 variable "key_name" {
   type = string
 }
+
+variable "extra_tags" {
+  description = "Additional tags to merge with default project tags"
+  type        = map(string)
+  default     = {}
+}
