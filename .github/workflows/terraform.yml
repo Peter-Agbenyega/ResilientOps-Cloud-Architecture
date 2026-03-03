@@ -1,0 +1,99 @@
+# -----------------------------------------------------------------------------
+# CloudNexus Terraform Workflow (AWS S3 Backend) — PR Plan, Main Apply
+#
+# Purpose
+# - Runs Terraform safely using a PR-first workflow:
+#     1) Pull Request to main  -> terraform plan (NO changes applied)
+#     2) Push to main (merge)  -> terraform apply (changes applied)
+#
+# Why this is the pro setup
+# - Prevents accidental deployments from feature branches
+# - Forces review via PR before any infrastructure changes
+# - Keeps state centralized and team-safe using S3 + DynamoDB locking
+#
+# Required AWS Backend (must already exist before pipeline runs)
+# - S3 bucket for Terraform state
+# - DynamoDB table for state locking
+# Terraform cannot create these while using them as backend.
+#
+# Example backend block inside your Terraform code:
+# terraform {
+#   backend "s3" {
+#     bucket         = "peter-terraform-state-backend-001"
+#     key            = "resilientops-cloud-architecture/terraform.tfstate"
+#     region         = "us-east-1"
+#     dynamodb_table = "peter-terraform-state-locks-001"
+#     encrypt        = true
+#   }
+# }
+#
+# IMPORTANT NOTE (common confusion)
+# - backend "key" is NOT your EC2 key pair name.
+# - backend "key" is only the S3 path/filename for the tfstate object.
+#
+# GitHub Secrets required
+# Repo -> Settings -> Secrets and variables -> Actions:
+# - AWS_ACCESS_KEY_ID
+# - AWS_SECRET_ACCESS_KEY
+#
+# Optional (recommended) safety hardening
+# - Repo -> Settings -> Environments -> development
+# - Turn on "Required reviewers" to force manual approval before apply runs.
+#
+# Troubleshooting quick hits
+# - terraform init fails: confirm S3 bucket/DynamoDB table exist + region matches
+# - terraform fmt fails: run `terraform fmt -recursive` locally and commit
+# - terraform validate fails: fix syntax/providers/modules before merging
+# -----------------------------------------------------------------------------
+
+name: Terraform AWS Deploy (Dev) – PR Plan, Main Apply
+
+on:
+  pull_request:
+    branches: [ "main" ]
+  push:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  terraform:
+    name: Terraform (Dev)
+    runs-on: ubuntu-latest
+    environment: development
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform init -input=false
+
+      - name: Terraform Format
+        run: terraform fmt -check -recursive
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Plan (PR Only)
+        if: github.event_name == 'pull_request'
+        run: terraform plan -input=false
+
+      - name: Terraform Apply (Main Only)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: terraform apply -auto-approve -input=false
