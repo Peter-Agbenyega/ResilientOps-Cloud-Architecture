@@ -61,7 +61,7 @@ jobs:
   terraform:
     name: Terraform (Dev)
     runs-on: ubuntu-latest
-    environment: development
+    environment: cloudnexus-development
 
     defaults:
       run:
