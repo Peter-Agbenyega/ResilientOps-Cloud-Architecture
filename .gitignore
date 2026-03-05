@@ -13,3 +13,7 @@ override.tf
 override.tf.json
 *_override.tf
 *_override.tf.json
+# Terraform bootstrap local artifacts (never commit)
+bootstrap/.terraform/
+bootstrap/terraform.tfstate
+bootstrap/terraform.tfstate.backup
