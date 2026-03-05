@@ -37,7 +37,7 @@
 # - AWS_SECRET_ACCESS_KEY
 #
 # Optional (recommended) safety hardening
-# - Repo -> Settings -> Environments -> development
+# - Repo -> Settings -> Environments -> cloudnexus-development
 # - Turn on "Required reviewers" to force manual approval before apply runs.
 #
 # Troubleshooting quick hits
