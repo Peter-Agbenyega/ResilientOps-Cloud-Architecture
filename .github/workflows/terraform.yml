@@ -90,10 +90,10 @@ jobs:
       - name: Terraform Validate
         run: terraform validate
 
-      - name: Terraform Plan (PR Only)
-        if: github.event_name == 'pull_request'
-        run: terraform plan -input=false
-
       - name: Terraform Apply (Main Only)
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: terraform apply -auto-approve -input=false
+        run: terraform apply -auto-approve -input=false -var-file=dev.ci.tfvars
+        
+      - name: Terraform Apply (Main Only)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: terraform apply -auto-approve -input=false -var-file=dev.ci.tfvars
