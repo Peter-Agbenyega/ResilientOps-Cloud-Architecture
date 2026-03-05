@@ -90,6 +90,15 @@ jobs:
       - name: Terraform Validate
         run: terraform validate
 
+feature/backend-bootstrap-and-fixes
+      - name: Terraform Plan (PR Only)
+        if: github.event_name == 'pull_request'
+        run: terraform plan -input=false -var-file=dev.ci.tfvars
+
+      - name: Terraform Apply (Main Only)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: terraform apply -auto-approve -input=false -var-file=dev.ci.tfvars
+
       - name: Terraform Apply (Main Only)
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: terraform apply -auto-approve -input=false -var-file=dev.ci.tfvars
@@ -97,3 +106,4 @@ jobs:
       - name: Terraform Apply (Main Only)
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: terraform apply -auto-approve -input=false -var-file=dev.ci.tfvars
+ main
