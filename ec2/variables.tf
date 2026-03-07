@@ -2,18 +2,32 @@ variable "vpc_id" {
   type = string
 }
 
-variable "public_subnet_ids" {
-  type = list(string)
+variable "public_subnet_az_1_id" {
+  type = string
+}
+
+variable "private_subnet_az_1_id" {
+  type = string
+}
+
+variable "private_subnet_az_2_id" {
+  type = string
+}
+
+variable "vpc_cidr_block" {
+  type = string
+}
+
+variable "tags" {
+  type = map(string)
 }
 
 variable "bastion_allowed_cidr" {
-  type        = string
-  description = "CIDR allowed to SSH into the bastion host (use your public IP /32 in real life)"
+  type = string
 }
 
 variable "ami_id" {
-  type        = string
-  description = "SSM AMI parameter path for Amazon Linux (not raw ami-xxxx)"
+  type = string
 }
 
 variable "instance_type" {
@@ -22,8 +36,4 @@ variable "instance_type" {
 
 variable "key_name" {
   type = string
-}
-
-variable "tags" {
-  type = map(string)
 }
