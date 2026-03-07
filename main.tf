@@ -8,8 +8,6 @@ terraform {
     }
   }
 
-  # Remote state (S3) + state locking (DynamoDB)
-  # Backend does NOT support var.* or locals.*
   backend "s3" {
     bucket         = "peter-terraform-state-backend-001"
     key            = "resilientops-cloud-architecture/dev/terraform.tfstate"
@@ -44,11 +42,6 @@ module "vpc" {
 # ----------------------------------------
 # EC2 MODULE (Bastion)
 # ----------------------------------------
-# main.tf
-
-
-# main.tf
-
 module "ec2" {
   source = "./ec2"
 
@@ -64,4 +57,39 @@ module "ec2" {
   ami_id        = var.ami_id
   instance_type = var.instance_type
   key_name      = var.key_name
+}
+
+# ----------------------------------------
+# ALB MODULE
+# ----------------------------------------
+module "alb" {
+  source = "./alb"
+
+  vpc_id                = module.vpc.vpc_id
+  public_subnet_az2a_id = module.vpc.public_subnet_az2a_id
+  public_subnet_az2b_id = module.vpc.public_subnet_az2b_id
+
+  tags = local.merged_tags
+}
+
+# ----------------------------------------
+# AUTO SCALING MODULE
+# ----------------------------------------
+module "auto_scaling" {
+  source = "./auto-scaling"
+
+  vpc_id                = module.vpc.vpc_id
+  public_subnet_az2a_id = module.vpc.public_subnet_az2a_id
+  public_subnet_az2b_id = module.vpc.public_subnet_az2b_id
+
+  jupiter_app_tg_arn = module.alb.jupiter_app_tg_arn
+
+  ami_id           = var.ami_id
+  instance_type    = var.instance_type
+  key_name         = var.key_name
+  max_size         = var.max_size
+  min_size         = var.min_size
+  desired_capacity = var.desired_capacity
+
+  tags = local.merged_tags
 }
