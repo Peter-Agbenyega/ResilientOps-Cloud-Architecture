@@ -44,11 +44,19 @@ module "vpc" {
 # ----------------------------------------
 # EC2 MODULE (Bastion)
 # ----------------------------------------
+# main.tf
+
+
+# main.tf
+
 module "ec2" {
   source = "./ec2"
 
-  vpc_id            = module.vpc.vpc_id
-  public_subnet_ids = module.vpc.public_subnet_ids
+  vpc_id                 = module.vpc.vpc_id
+  public_subnet_az_1_id  = module.vpc.public_subnet_az_1_id
+  private_subnet_az_1_id = module.vpc.private_subnet_az_1_id
+  private_subnet_az_2_id = module.vpc.private_subnet_az_2_id
+  vpc_cidr_block         = module.vpc.vpc_cidr_block
 
   tags                 = local.merged_tags
   bastion_allowed_cidr = var.bastion_allowed_cidr
