@@ -84,8 +84,4 @@ resource "aws_lb_listener" "http_listener" {
     type             = "forward"
     target_group_arn = aws_lb_target_group.app_tg.arn
   }
-
-  tags = merge(var.tags, {
-    Name = "${var.tags["project"]}-${var.tags["application"]}-${var.tags["environment"]}-http-listener"
-  })
 }
