@@ -3,17 +3,17 @@ output "security_group_id" {
 }
 
 output "jupiter_app_tg_arn" {
-  value = aws_lb_target_group.jupiter_app_tg.arn
+  value = aws_lb_target_group.app_tg.arn
 }
 
 output "alb_dns_name" {
-  value = aws_lb.jupiter_app_alb.dns_name
+  value = aws_lb.app_alb.dns_name
 }
 
 output "alb_zone_id" {
-  value = aws_lb.jupiter_app_alb.zone_id
+  value = aws_lb.app_alb.zone_id
 }
 
 output "alb_arn" {
-  value = aws_lb.jupiter_app_alb.arn
+  value = aws_lb.app_alb.arn
 }

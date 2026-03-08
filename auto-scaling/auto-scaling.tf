@@ -10,7 +10,7 @@ resource "aws_security_group" "app_server_sg" {
 }
 
 # CREATING INBOUND RULE FOR SSH ACCESS
-resource "aws_vpc_security_group_ingress_rule" "allow_ssh_for_app_servers" {
+resource "aws_vpc_security_group_ingress_rule" "allow_ssh_for_app_server" {
   security_group_id = aws_security_group.app_server_sg.id
   cidr_ipv4         = "0.0.0.0/0"
   from_port         = 22
@@ -19,7 +19,7 @@ resource "aws_vpc_security_group_ingress_rule" "allow_ssh_for_app_servers" {
 }
 
 # CREATING INBOUND RULE FOR HTTP
-resource "aws_vpc_security_group_ingress_rule" "allow_http_for_app_servers" {
+resource "aws_vpc_security_group_ingress_rule" "allow_http_for_app_server" {
   security_group_id = aws_security_group.app_server_sg.id
   cidr_ipv4         = "0.0.0.0/0"
   from_port         = 80
@@ -28,7 +28,7 @@ resource "aws_vpc_security_group_ingress_rule" "allow_http_for_app_servers" {
 }
 
 # CREATING INBOUND RULE FOR HTTPS
-resource "aws_vpc_security_group_ingress_rule" "allow_https_for_app_servers" {
+resource "aws_vpc_security_group_ingress_rule" "allow_https_for_app_server" {
   security_group_id = aws_security_group.app_server_sg.id
   cidr_ipv4         = "0.0.0.0/0"
   from_port         = 443
@@ -37,16 +37,21 @@ resource "aws_vpc_security_group_ingress_rule" "allow_https_for_app_servers" {
 }
 
 # CREATING OUTBOUND RULE FOR APPLICATION SERVER SECURITY GROUP
-resource "aws_vpc_security_group_egress_rule" "allow_all_app_server_traffic_ipv4" {
+resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv4" {
   security_group_id = aws_security_group.app_server_sg.id
   cidr_ipv4         = "0.0.0.0/0"
   ip_protocol       = "-1"
 }
 
+# GETTING ACTUAL AMI ID FROM SSM PARAMETER STORE
+data "aws_ssm_parameter" "app_server_ami" {
+  name = var.ami_id
+}
+
 # CREATING LAUNCH TEMPLATE FOR APPLICATION SERVERS
 resource "aws_launch_template" "app_launch_template" {
   name_prefix   = "${var.tags["project"]}-${var.tags["application"]}-${var.tags["environment"]}-lt-"
-  image_id      = var.ami_id
+  image_id      = data.aws_ssm_parameter.app_server_ami.value
   instance_type = var.instance_type
   key_name      = var.key_name
 
