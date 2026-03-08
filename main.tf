@@ -63,7 +63,7 @@ module "ec2" {
 # ALB MODULE
 # ----------------------------------------
 module "alb" {
-  source = "./alb"
+  source = "./ALB"
 
   vpc_id                = module.vpc.vpc_id
   public_subnet_az2a_id = module.vpc.public_subnet_az2a_id
