@@ -2,11 +2,11 @@ variable "vpc_id" {
   type = string
 }
 
-variable "public_subnet_az2a_id" {
+variable "public_subnet_az_2a_id" {
   type = string
 }
 
-variable "public_subnet_az2b_id" {
+variable "public_subnet_az_2b_id" {
   type = string
 }
 

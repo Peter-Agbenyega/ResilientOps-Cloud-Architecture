@@ -10,7 +10,7 @@ resource "aws_security_group" "app_server_sg" {
 }
 
 # CREATING INBOUND RULE FOR SSH ACCESS
-resource "aws_vpc_security_group_ingress_rule" "allow_ssh_for_app_server" {
+resource "aws_vpc_security_group_ingress_rule" "allow_ssh_for_app_servers" {
   security_group_id = aws_security_group.app_server_sg.id
   cidr_ipv4         = "0.0.0.0/0"
   from_port         = 22
@@ -19,7 +19,7 @@ resource "aws_vpc_security_group_ingress_rule" "allow_ssh_for_app_server" {
 }
 
 # CREATING INBOUND RULE FOR HTTP
-resource "aws_vpc_security_group_ingress_rule" "allow_http_for_app_server" {
+resource "aws_vpc_security_group_ingress_rule" "allow_http_for_app_servers" {
   security_group_id = aws_security_group.app_server_sg.id
   cidr_ipv4         = "0.0.0.0/0"
   from_port         = 80
@@ -28,7 +28,7 @@ resource "aws_vpc_security_group_ingress_rule" "allow_http_for_app_server" {
 }
 
 # CREATING INBOUND RULE FOR HTTPS
-resource "aws_vpc_security_group_ingress_rule" "allow_https_for_app_server" {
+resource "aws_vpc_security_group_ingress_rule" "allow_https_for_app_servers" {
   security_group_id = aws_security_group.app_server_sg.id
   cidr_ipv4         = "0.0.0.0/0"
   from_port         = 443
@@ -37,7 +37,7 @@ resource "aws_vpc_security_group_ingress_rule" "allow_https_for_app_server" {
 }
 
 # CREATING OUTBOUND RULE FOR APPLICATION SERVER SECURITY GROUP
-resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv4" {
+resource "aws_vpc_security_group_egress_rule" "allow_all_app_server_traffic_ipv4" {
   security_group_id = aws_security_group.app_server_sg.id
   cidr_ipv4         = "0.0.0.0/0"
   ip_protocol       = "-1"
@@ -73,7 +73,7 @@ resource "aws_autoscaling_group" "app_asg" {
   desired_capacity          = var.desired_capacity
   max_size                  = var.max_size
   min_size                  = var.min_size
-  vpc_zone_identifier       = [var.public_subnet_az2a_id, var.public_subnet_az2b_id]
+  vpc_zone_identifier       = [var.public_subnet_az_2a_id, var.public_subnet_az_2b_id]
   target_group_arns         = [var.jupiter_app_tg_arn]
   health_check_type         = "EC2"
   health_check_grace_period = 300

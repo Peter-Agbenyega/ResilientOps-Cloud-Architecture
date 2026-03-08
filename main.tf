@@ -17,16 +17,11 @@ terraform {
   }
 }
 
-# ----------------------------------------
-# AWS PROVIDER
-# ----------------------------------------
 provider "aws" {
   region = var.aws_region
 }
 
-# ----------------------------------------
 # VPC MODULE
-# ----------------------------------------
 module "vpc" {
   source = "./vpc"
 
@@ -39,9 +34,7 @@ module "vpc" {
   tags = local.merged_tags
 }
 
-# ----------------------------------------
 # EC2 MODULE (Bastion)
-# ----------------------------------------
 module "ec2" {
   source = "./ec2"
 
@@ -59,28 +52,24 @@ module "ec2" {
   key_name      = var.key_name
 }
 
-# ----------------------------------------
 # ALB MODULE
-# ----------------------------------------
 module "alb" {
-  source = "./ALB"
+  source = "./alb"
 
-  vpc_id                = module.vpc.vpc_id
-  public_subnet_az2a_id = module.vpc.public_subnet_az2a_id
-  public_subnet_az2b_id = module.vpc.public_subnet_az2b_id
+  vpc_id                 = module.vpc.vpc_id
+  public_subnet_az_2a_id = module.vpc.public_subnet_az_2a_id
+  public_subnet_az_2b_id = module.vpc.public_subnet_az_2b_id
 
   tags = local.merged_tags
 }
 
-# ----------------------------------------
 # AUTO SCALING MODULE
-# ----------------------------------------
 module "auto_scaling" {
   source = "./auto-scaling"
 
-  vpc_id                = module.vpc.vpc_id
-  public_subnet_az2a_id = module.vpc.public_subnet_az2a_id
-  public_subnet_az2b_id = module.vpc.public_subnet_az2b_id
+  vpc_id                 = module.vpc.vpc_id
+  public_subnet_az_2a_id = module.vpc.public_subnet_az_2a_id
+  public_subnet_az_2b_id = module.vpc.public_subnet_az_2b_id
 
   jupiter_app_tg_arn = module.alb.jupiter_app_tg_arn
 
