@@ -8,7 +8,7 @@
 ########################################
 
 data "aws_ssm_parameter" "bastion_ami" {
-  name = var.ami_id
+  name = "/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-6.1-x86_64"
 }
 
 resource "aws_security_group" "bastion_sg" {

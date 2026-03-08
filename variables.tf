@@ -23,10 +23,7 @@ variable "private_cidr_blocks" {
   type        = list(string)
 }
 
-variable "database_cidr_blocks" {
-  description = "Database subnet CIDR blocks"
-  type        = list(string)
-}
+
 
 variable "ami_id" {
   type = string
@@ -67,4 +64,14 @@ variable "bastion_allowed_cidr" {
   description = "CIDR block allowed to access bastion host"
   type        = string
   default     = "0.0.0.0/0"
+}
+
+variable "tags" {
+  type    = map(string)
+  default = {}
+}
+
+variable "database_cidr_blocks" {
+  description = "Database subnet CIDR blocks"
+  type        = list(string)
 }

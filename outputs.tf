@@ -17,11 +17,3 @@ output "private_subnet_az_1_id" {
 output "private_subnet_az_2_id" {
   value = module.vpc.private_subnet_az_2_id
 }
-
-output "database_subnet_az_1_id" {
-  value = module.vpc.database_subnet_az_1_id
-}
-
-output "database_subnet_az_2_id" {
-  value = module.vpc.database_subnet_az_2_id
-}
