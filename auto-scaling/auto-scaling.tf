@@ -44,11 +44,16 @@ resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv4" {
 }
 
 # GETTING ACTUAL AMI ID FROM SSM PARAMETER STORE
+
+
+# CREATING LAUNCH TEMPLATE FOR APPLICATION SERVERS
+
+
+# CREATING LAUNCH TEMPLATE FOR APPLICATION SERVERS
 data "aws_ssm_parameter" "app_server_ami" {
   name = var.ami_id
 }
 
-# CREATING LAUNCH TEMPLATE FOR APPLICATION SERVERS
 resource "aws_launch_template" "app_launch_template" {
   name_prefix   = "${var.tags["project"]}-${var.tags["application"]}-${var.tags["environment"]}-lt-"
   image_id      = data.aws_ssm_parameter.app_server_ami.value
