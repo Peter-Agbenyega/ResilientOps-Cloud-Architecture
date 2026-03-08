@@ -14,6 +14,14 @@ output "public_subnet_az_2_id" {
   value = aws_subnet.public_subnet_az_2.id
 }
 
+output "public_subnet_az_2a_id" {
+  value = aws_subnet.public_subnet_az_1.id
+}
+
+output "public_subnet_az_2b_id" {
+  value = aws_subnet.public_subnet_az_2.id
+}
+
 output "private_subnet_az_1_id" {
   value = aws_subnet.private_subnet_az_1.id
 }
@@ -22,10 +30,10 @@ output "private_subnet_az_2_id" {
   value = aws_subnet.private_subnet_az_2.id
 }
 
-output "public_subnet_az2a_id" {
-  value = aws_subnet.public_subnet_az_1.id
+output "db_subnet_az_1_id" {
+  value = aws_subnet.db_subnet_az_1.id
 }
 
-output "public_subnet_az2b_id" {
-  value = aws_subnet.public_subnet_az_2.id
+output "db_subnet_az_2_id" {
+  value = aws_subnet.db_subnet_az_2.id
 }

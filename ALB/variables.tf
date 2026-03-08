@@ -3,12 +3,12 @@ variable "vpc_id" {
   type        = string
 }
 
-variable "public_subnet_az2a_id" {
+variable "public_subnet_az_2a_id" {
   description = "Public subnet ID in AZ2A"
   type        = string
 }
 
-variable "public_subnet_az2b_id" {
+variable "public_subnet_az_2b_id" {
   description = "Public subnet ID in AZ2B"
   type        = string
 }

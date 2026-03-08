@@ -28,14 +28,14 @@ resource "aws_vpc_security_group_ingress_rule" "allow_https_for_alb" {
 }
 
 # CREATING OUTBOUND RULE FOR ALB SECURITY GROUP
-resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv4_for_alb" {
+resource "aws_vpc_security_group_egress_rule" "allow_all_alb_traffic_ipv4" {
   security_group_id = aws_security_group.app_alb_sg.id
   cidr_ipv4         = "0.0.0.0/0"
   ip_protocol       = "-1"
 }
 
 # CREATING TARGET GROUP FOR APPLICATION SERVERS
-resource "aws_lb_target_group" "app_tg" {
+resource "aws_lb_target_group" "jupiter_app_tg" {
   name        = "app-target-group"
   port        = 80
   protocol    = "HTTP"
@@ -49,7 +49,7 @@ resource "aws_lb_target_group" "app_tg" {
     matcher             = "200,301,302"
     interval            = 30
     timeout             = 5
-    port                = 80   
+    port                = 80
     healthy_threshold   = 5
     unhealthy_threshold = 2
   }
@@ -60,12 +60,12 @@ resource "aws_lb_target_group" "app_tg" {
 }
 
 # CREATING APPLICATION LOAD BALANCER
-resource "aws_lb" "app_alb" {
+resource "aws_lb" "jupiter_app_alb" {
   name               = "app-alb"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.app_alb_sg.id]
-  subnets            = [var.public_subnet_az2a_id, var.public_subnet_az2b_id]
+  subnets            = [var.public_subnet_az_2a_id, var.public_subnet_az_2b_id]
 
   enable_deletion_protection = false
 
@@ -75,14 +75,14 @@ resource "aws_lb" "app_alb" {
 }
 
 # CREATING ALB LISTENER FOR HTTP
-resource "aws_lb_listener" "http_listener" {
-  load_balancer_arn = aws_lb.app_alb.arn
+resource "aws_lb_listener" "jupiter_app_http_listener" {
+  load_balancer_arn = aws_lb.jupiter_app_alb.arn
   port              = 80
   protocol          = "HTTP"
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.app_tg.arn
+    target_group_arn = aws_lb_target_group.jupiter_app_tg.arn
   }
 
   tags = merge(var.tags, {
