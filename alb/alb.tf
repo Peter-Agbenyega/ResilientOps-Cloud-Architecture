@@ -1,7 +1,7 @@
 # CREATING SECURITY GROUP FOR APPLICATION LOAD BALANCER
 resource "aws_security_group" "app_alb_sg" {
   name        = "app-alb-sg"
-  description = "Allow HTTP and HTTPS traffic to ALB"
+  description = "Allow HTTP and HTTPS traffic to the application load balancer"
   vpc_id      = var.vpc_id
 
   tags = merge(var.tags, {
