@@ -14,11 +14,11 @@ data "aws_iam_policy_document" "ec2_assume_role_policy" {
 
 # CREATING IAM ROLE FOR EC2 INSTANCE
 resource "aws_iam_role" "ec2_iam_role" {
-  name               = "${local.merged_tags["project"]}-${local.merged_tags["application"]}-${local.merged_tags["environment"]}-ec2-role"
+  name               = "${var.tags["project"]}-${var.tags["application"]}-${var.tags["environment"]}-ec2-role"
   assume_role_policy = data.aws_iam_policy_document.ec2_assume_role_policy.json
 
-  tags = merge(local.merged_tags, {
-    Name = "${local.merged_tags["project"]}-${local.merged_tags["application"]}-${local.merged_tags["environment"]}-ec2-role"
+  tags = merge(var.tags, {
+    Name = "${var.tags["project"]}-${var.tags["application"]}-${var.tags["environment"]}-ec2-role"
   })
 }
 
@@ -30,10 +30,10 @@ resource "aws_iam_role_policy_attachment" "ec2_ssm_managed_policy" {
 
 # CREATING IAM INSTANCE PROFILE
 resource "aws_iam_instance_profile" "ec2_iam_instance_profile" {
-  name = "${local.merged_tags["project"]}-${local.merged_tags["application"]}-${local.merged_tags["environment"]}-ec2-instance-profile"
+  name = "${var.tags["project"]}-${var.tags["application"]}-${var.tags["environment"]}-ec2-instance-profile"
   role = aws_iam_role.ec2_iam_role.name
 
-  tags = merge(local.merged_tags, {
-    Name = "${local.merged_tags["project"]}-${local.merged_tags["application"]}-${local.merged_tags["environment"]}-ec2-instance-profile"
+  tags = merge(var.tags, {
+    Name = "${var.tags["project"]}-${var.tags["application"]}-${var.tags["environment"]}-ec2-instance-profile"
   })
 }

@@ -21,6 +21,13 @@ provider "aws" {
   region = var.aws_region
 }
 
+# IAM module
+module "iam" {
+  source = "./iam"
+
+  tags = local.merged_tags
+}
+
 # VPC module
 module "vpc" {
   source = "./vpc"
