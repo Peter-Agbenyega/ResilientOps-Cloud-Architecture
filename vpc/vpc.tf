@@ -1,18 +1,14 @@
 ########################################
 # VPC MODULE
-# File: vpc/vpc.tf
-# Purpose:
-#   - Create a production-style VPC layout across 2 AZs:
-#     * 2 Public subnets (AZ-1, AZ-2)
-#     * 2 Private subnets (AZ-1, AZ-2)
-#     * 2 Database subnets (AZ-1, AZ-2)
-#   - Internet Gateway for public routing
-#   - NAT Gateways (one per AZ) for private/db outbound internet
-#   - Route tables + associations for public/private/db
+# - Main VPC for the three-tier architecture
+# - Public, private, and database subnets across 2 AZs
+# - Internet Gateway for public access
+# - NAT Gateways for outbound access from private and database tiers
+# - Route tables and associations for each subnet tier
 ########################################
 
 ########################################
-# VPC
+# CREATING MAIN VPC
 ########################################
 resource "aws_vpc" "main_vpc" {
   cidr_block           = var.vpc_cidr_block
@@ -26,20 +22,7 @@ resource "aws_vpc" "main_vpc" {
 }
 
 ########################################
-# INTERNET GATEWAY
-# - Gives PUBLIC subnets direct internet access
-########################################
-resource "aws_internet_gateway" "igw" {
-  vpc_id = aws_vpc.main_vpc.id
-
-  tags = merge(var.tags, {
-    Name = "${var.tags["project"]}-${var.tags["application"]}-${var.tags["environment"]}-igw"
-  })
-}
-
-########################################
-# PUBLIC SUBNETS (2 AZs)
-# - Instances here can get a public IP
+# CREATING PUBLIC SUBNET IN AZ 1
 ########################################
 resource "aws_subnet" "public_subnet_az_1" {
   vpc_id                  = aws_vpc.main_vpc.id
@@ -53,6 +36,9 @@ resource "aws_subnet" "public_subnet_az_1" {
   })
 }
 
+########################################
+# CREATING PUBLIC SUBNET IN AZ 2
+########################################
 resource "aws_subnet" "public_subnet_az_2" {
   vpc_id                  = aws_vpc.main_vpc.id
   cidr_block              = var.public_cidr_blocks[1]
@@ -66,8 +52,7 @@ resource "aws_subnet" "public_subnet_az_2" {
 }
 
 ########################################
-# PRIVATE SUBNETS (2 AZs)
-# - No public IPs; outbound internet goes via NAT Gateway
+# CREATING PRIVATE SUBNET IN AZ 1
 ########################################
 resource "aws_subnet" "private_subnet_az_1" {
   vpc_id            = aws_vpc.main_vpc.id
@@ -80,6 +65,9 @@ resource "aws_subnet" "private_subnet_az_1" {
   })
 }
 
+########################################
+# CREATING PRIVATE SUBNET IN AZ 2
+########################################
 resource "aws_subnet" "private_subnet_az_2" {
   vpc_id            = aws_vpc.main_vpc.id
   cidr_block        = var.private_cidr_blocks[1]
@@ -92,9 +80,7 @@ resource "aws_subnet" "private_subnet_az_2" {
 }
 
 ########################################
-# DATABASE SUBNETS (2 AZs)
-# - Still private; typically used for RDS
-# - Outbound internet (patching, updates) goes via NAT
+# CREATING DATABASE SUBNET IN AZ 1
 ########################################
 resource "aws_subnet" "db_subnet_az_1" {
   vpc_id            = aws_vpc.main_vpc.id
@@ -107,6 +93,9 @@ resource "aws_subnet" "db_subnet_az_1" {
   })
 }
 
+########################################
+# CREATING DATABASE SUBNET IN AZ 2
+########################################
 resource "aws_subnet" "db_subnet_az_2" {
   vpc_id            = aws_vpc.main_vpc.id
   cidr_block        = var.database_cidr_blocks[1]
@@ -119,8 +108,51 @@ resource "aws_subnet" "db_subnet_az_2" {
 }
 
 ########################################
-# ELASTIC IPs for NAT Gateways (1 per AZ)
-# - NAT needs an EIP so it can reach the internet
+# CREATING INTERNET GATEWAY
+########################################
+resource "aws_internet_gateway" "igw" {
+  vpc_id = aws_vpc.main_vpc.id
+
+  tags = merge(var.tags, {
+    Name = "${var.tags["project"]}-${var.tags["application"]}-${var.tags["environment"]}-igw"
+  })
+}
+
+########################################
+# CREATING PUBLIC ROUTE TABLE
+########################################
+resource "aws_route_table" "public_rt" {
+  vpc_id = aws_vpc.main_vpc.id
+
+  tags = merge(var.tags, {
+    Name = "${var.tags["project"]}-${var.tags["application"]}-${var.tags["environment"]}-public-rt"
+  })
+}
+
+########################################
+# CREATING PUBLIC DEFAULT ROUTE
+########################################
+resource "aws_route" "public_default_route" {
+  route_table_id         = aws_route_table.public_rt.id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.igw.id
+}
+
+########################################
+# ASSOCIATING PUBLIC ROUTE TABLE WITH PUBLIC SUBNETS
+########################################
+resource "aws_route_table_association" "public_rt_assoc_az_1" {
+  subnet_id      = aws_subnet.public_subnet_az_1.id
+  route_table_id = aws_route_table.public_rt.id
+}
+
+resource "aws_route_table_association" "public_rt_assoc_az_2" {
+  subnet_id      = aws_subnet.public_subnet_az_2.id
+  route_table_id = aws_route_table.public_rt.id
+}
+
+########################################
+# CREATING ELASTIC IP FOR NAT GATEWAY IN AZ 1
 ########################################
 resource "aws_eip" "nat_eip_az_1" {
   domain = "vpc"
@@ -130,6 +162,9 @@ resource "aws_eip" "nat_eip_az_1" {
   })
 }
 
+########################################
+# CREATING ELASTIC IP FOR NAT GATEWAY IN AZ 2
+########################################
 resource "aws_eip" "nat_eip_az_2" {
   domain = "vpc"
 
@@ -139,15 +174,12 @@ resource "aws_eip" "nat_eip_az_2" {
 }
 
 ########################################
-# NAT GATEWAYS (1 per AZ)
-# - Private subnets in AZ-1 route to NAT in AZ-1
-# - Private subnets in AZ-2 route to NAT in AZ-2
+# CREATING NAT GATEWAY IN AZ 1
 ########################################
 resource "aws_nat_gateway" "nat_gw_az_1" {
   allocation_id = aws_eip.nat_eip_az_1.id
   subnet_id     = aws_subnet.public_subnet_az_1.id
 
-  # Helpful in some cases for ordering
   depends_on = [aws_internet_gateway.igw]
 
   tags = merge(var.tags, {
@@ -155,6 +187,9 @@ resource "aws_nat_gateway" "nat_gw_az_1" {
   })
 }
 
+########################################
+# CREATING NAT GATEWAY IN AZ 2
+########################################
 resource "aws_nat_gateway" "nat_gw_az_2" {
   allocation_id = aws_eip.nat_eip_az_2.id
   subnet_id     = aws_subnet.public_subnet_az_2.id
@@ -167,36 +202,7 @@ resource "aws_nat_gateway" "nat_gw_az_2" {
 }
 
 ########################################
-# PUBLIC ROUTE TABLE
-# - Default route to the Internet Gateway
-########################################
-resource "aws_route_table" "public_rt" {
-  vpc_id = aws_vpc.main_vpc.id
-
-  tags = merge(var.tags, {
-    Name = "${var.tags["project"]}-${var.tags["application"]}-${var.tags["environment"]}-public-rt"
-  })
-}
-
-resource "aws_route" "public_default_route" {
-  route_table_id         = aws_route_table.public_rt.id
-  destination_cidr_block = "0.0.0.0/0"
-  gateway_id             = aws_internet_gateway.igw.id
-}
-
-resource "aws_route_table_association" "public_rt_assoc_az_1" {
-  subnet_id      = aws_subnet.public_subnet_az_1.id
-  route_table_id = aws_route_table.public_rt.id
-}
-
-resource "aws_route_table_association" "public_rt_assoc_az_2" {
-  subnet_id      = aws_subnet.public_subnet_az_2.id
-  route_table_id = aws_route_table.public_rt.id
-}
-
-########################################
-# PRIVATE ROUTE TABLES (1 per AZ)
-# - Default route to NAT in same AZ
+# CREATING PRIVATE ROUTE TABLE IN AZ 1
 ########################################
 resource "aws_route_table" "private_rt_az_1" {
   vpc_id = aws_vpc.main_vpc.id
@@ -206,17 +212,9 @@ resource "aws_route_table" "private_rt_az_1" {
   })
 }
 
-resource "aws_route" "private_default_route_az_1" {
-  route_table_id         = aws_route_table.private_rt_az_1.id
-  destination_cidr_block = "0.0.0.0/0"
-  nat_gateway_id         = aws_nat_gateway.nat_gw_az_1.id
-}
-
-resource "aws_route_table_association" "private_rt_assoc_az_1" {
-  subnet_id      = aws_subnet.private_subnet_az_1.id
-  route_table_id = aws_route_table.private_rt_az_1.id
-}
-
+########################################
+# CREATING PRIVATE ROUTE TABLE IN AZ 2
+########################################
 resource "aws_route_table" "private_rt_az_2" {
   vpc_id = aws_vpc.main_vpc.id
 
@@ -225,10 +223,30 @@ resource "aws_route_table" "private_rt_az_2" {
   })
 }
 
+########################################
+# CREATING PRIVATE DEFAULT ROUTE IN AZ 1
+########################################
+resource "aws_route" "private_default_route_az_1" {
+  route_table_id         = aws_route_table.private_rt_az_1.id
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id         = aws_nat_gateway.nat_gw_az_1.id
+}
+
+########################################
+# CREATING PRIVATE DEFAULT ROUTE IN AZ 2
+########################################
 resource "aws_route" "private_default_route_az_2" {
   route_table_id         = aws_route_table.private_rt_az_2.id
   destination_cidr_block = "0.0.0.0/0"
   nat_gateway_id         = aws_nat_gateway.nat_gw_az_2.id
+}
+
+########################################
+# ASSOCIATING PRIVATE ROUTE TABLES WITH PRIVATE SUBNETS
+########################################
+resource "aws_route_table_association" "private_rt_assoc_az_1" {
+  subnet_id      = aws_subnet.private_subnet_az_1.id
+  route_table_id = aws_route_table.private_rt_az_1.id
 }
 
 resource "aws_route_table_association" "private_rt_assoc_az_2" {
@@ -237,9 +255,7 @@ resource "aws_route_table_association" "private_rt_assoc_az_2" {
 }
 
 ########################################
-# DATABASE ROUTE TABLES (1 per AZ)
-# - Often DB subnets are kept private too
-# - Route to NAT for outbound patching, updates, etc.
+# CREATING DATABASE ROUTE TABLE IN AZ 1
 ########################################
 resource "aws_route_table" "db_rt_az_1" {
   vpc_id = aws_vpc.main_vpc.id
@@ -249,17 +265,9 @@ resource "aws_route_table" "db_rt_az_1" {
   })
 }
 
-resource "aws_route" "db_default_route_az_1" {
-  route_table_id         = aws_route_table.db_rt_az_1.id
-  destination_cidr_block = "0.0.0.0/0"
-  nat_gateway_id         = aws_nat_gateway.nat_gw_az_1.id
-}
-
-resource "aws_route_table_association" "db_rt_assoc_az_1" {
-  subnet_id      = aws_subnet.db_subnet_az_1.id
-  route_table_id = aws_route_table.db_rt_az_1.id
-}
-
+########################################
+# CREATING DATABASE ROUTE TABLE IN AZ 2
+########################################
 resource "aws_route_table" "db_rt_az_2" {
   vpc_id = aws_vpc.main_vpc.id
 
@@ -268,10 +276,30 @@ resource "aws_route_table" "db_rt_az_2" {
   })
 }
 
+########################################
+# CREATING DATABASE DEFAULT ROUTE IN AZ 1
+########################################
+resource "aws_route" "db_default_route_az_1" {
+  route_table_id         = aws_route_table.db_rt_az_1.id
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id         = aws_nat_gateway.nat_gw_az_1.id
+}
+
+########################################
+# CREATING DATABASE DEFAULT ROUTE IN AZ 2
+########################################
 resource "aws_route" "db_default_route_az_2" {
   route_table_id         = aws_route_table.db_rt_az_2.id
   destination_cidr_block = "0.0.0.0/0"
   nat_gateway_id         = aws_nat_gateway.nat_gw_az_2.id
+}
+
+########################################
+# ASSOCIATING DATABASE ROUTE TABLES WITH DATABASE SUBNETS
+########################################
+resource "aws_route_table_association" "db_rt_assoc_az_1" {
+  subnet_id      = aws_subnet.db_subnet_az_1.id
+  route_table_id = aws_route_table.db_rt_az_1.id
 }
 
 resource "aws_route_table_association" "db_rt_assoc_az_2" {
