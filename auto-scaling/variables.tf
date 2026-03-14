@@ -3,18 +3,28 @@ variable "vpc_id" {
   type        = string
 }
 
-variable "public_subnet_az_2a_id" {
-  description = "First subnet ID used by the autoscaling group"
+variable "private_subnet_az_1_id" {
+  description = "First private subnet ID used by the autoscaling group"
   type        = string
 }
 
-variable "public_subnet_az_2b_id" {
-  description = "Second subnet ID used by the autoscaling group"
+variable "private_subnet_az_2_id" {
+  description = "Second private subnet ID used by the autoscaling group"
   type        = string
 }
 
 variable "jupiter_app_tg_arn" {
   description = "Target group ARN used by the autoscaling group"
+  type        = string
+}
+
+variable "alb_security_group_id" {
+  description = "Security group ID of the application load balancer"
+  type        = string
+}
+
+variable "bastion_security_group_id" {
+  description = "Security group ID of the bastion host"
   type        = string
 }
 

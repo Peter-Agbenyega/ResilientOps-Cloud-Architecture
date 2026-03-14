@@ -63,6 +63,59 @@ variable "min_size" {
   default     = 1
 }
 
+variable "db_identifier" {
+  description = "RDS instance identifier"
+  type        = string
+}
+
+variable "db_name" {
+  description = "Initial database name"
+  type        = string
+}
+
+variable "db_engine" {
+  description = "Database engine for the RDS instance"
+  type        = string
+}
+
+variable "db_engine_version" {
+  description = "Database engine version for the RDS instance"
+  type        = string
+}
+
+variable "db_instance_class" {
+  description = "RDS instance class"
+  type        = string
+}
+
+variable "db_allocated_storage" {
+  description = "Allocated storage in gibibytes for the RDS instance"
+  type        = number
+}
+
+variable "db_username" {
+  description = "Master username for the RDS instance"
+  type        = string
+}
+
+variable "db_password" {
+  description = "Master password for the RDS instance"
+  type        = string
+  sensitive   = true
+}
+
+variable "db_multi_az" {
+  description = "Enable Multi-AZ deployment for the RDS instance"
+  type        = bool
+  default     = false
+}
+
+variable "db_skip_final_snapshot" {
+  description = "Skip the final snapshot when the RDS instance is destroyed"
+  type        = bool
+  default     = true
+}
+
 variable "extra_tags" {
   description = "Additional tags to merge with base project tags"
   type        = map(string)

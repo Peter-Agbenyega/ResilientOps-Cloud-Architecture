@@ -69,10 +69,12 @@ module "auto_scaling" {
   source = "./auto-scaling"
 
   vpc_id                 = module.vpc.vpc_id
-  public_subnet_az_2a_id = module.vpc.public_subnet_az_2a_id
-  public_subnet_az_2b_id = module.vpc.public_subnet_az_2b_id
+  private_subnet_az_1_id = module.vpc.private_subnet_az_1_id
+  private_subnet_az_2_id = module.vpc.private_subnet_az_2_id
 
-  jupiter_app_tg_arn = module.alb.jupiter_app_tg_arn
+  jupiter_app_tg_arn        = module.alb.jupiter_app_tg_arn
+  alb_security_group_id     = module.alb.security_group_id
+  bastion_security_group_id = module.ec2.bastion_sg_id
 
   ami_id           = var.ami_id
   instance_type    = var.instance_type
@@ -80,6 +82,28 @@ module "auto_scaling" {
   max_size         = var.max_size
   min_size         = var.min_size
   desired_capacity = var.desired_capacity
+
+  tags = local.merged_tags
+}
+
+# RDS module
+module "rds" {
+  source = "./rds"
+
+  vpc_id                = module.vpc.vpc_id
+  db_subnet_ids         = [module.vpc.db_subnet_az_1_id, module.vpc.db_subnet_az_2_id]
+  app_security_group_id = module.auto_scaling.security_group_id
+
+  db_identifier       = var.db_identifier
+  db_name             = var.db_name
+  db_engine           = var.db_engine
+  db_engine_version   = var.db_engine_version
+  db_instance_class   = var.db_instance_class
+  allocated_storage   = var.db_allocated_storage
+  db_username         = var.db_username
+  db_password         = var.db_password
+  multi_az            = var.db_multi_az
+  skip_final_snapshot = var.db_skip_final_snapshot
 
   tags = local.merged_tags
 }

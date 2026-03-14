@@ -8,6 +8,11 @@ output "bastion_host_public_ip" {
   value       = aws_instance.bastion_host.public_ip
 }
 
+output "bastion_sg_id" {
+  description = "Security group ID for the bastion host"
+  value       = aws_security_group.bastion_sg.id
+}
+
 output "private_server_az1a_id" {
   description = "ID of the first private EC2 host"
   value       = aws_instance.private_server_az1a.id

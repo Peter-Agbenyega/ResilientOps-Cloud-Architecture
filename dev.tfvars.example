@@ -20,6 +20,16 @@ availability_zones = ["us-east-1a", "us-east-1b"]
 max_size         = 3
 min_size         = 1
 desired_capacity = 2
+db_identifier    = "jupiter-dev-rds"
+db_name          = "jupiterapp"
+db_engine        = "mysql"
+db_engine_version      = "8.0"
+db_instance_class      = "db.t3.micro"
+db_allocated_storage   = 20
+db_username            = "admin"
+db_password            = "replace-with-strong-password"
+db_multi_az            = false
+db_skip_final_snapshot = true
 
 tags = {
   project     = "terraform-enterprise-lab"
