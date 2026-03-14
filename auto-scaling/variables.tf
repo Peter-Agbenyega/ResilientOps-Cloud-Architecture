@@ -1,5 +1,5 @@
 variable "vpc_id" {
-  description = "VPC ID for autoscaling resources"
+  description = "VPC ID where the autoscaling resources will be created"
   type        = string
 }
 
@@ -14,7 +14,7 @@ variable "private_subnet_az_2_id" {
 }
 
 variable "jupiter_app_tg_arn" {
-  description = "Target group ARN used by the autoscaling group"
+  description = "Application load balancer target group ARN used by the autoscaling group"
   type        = string
 }
 
@@ -29,12 +29,12 @@ variable "bastion_security_group_id" {
 }
 
 variable "ami_id" {
-  description = "AMI ID or SSM parameter path used for application instances"
+  description = "AMI ID or SSM parameter path used for the application server instances"
   type        = string
 }
 
 variable "instance_type" {
-  description = "EC2 instance type for application servers"
+  description = "EC2 instance type for the application servers"
   type        = string
 }
 
@@ -45,21 +45,21 @@ variable "key_name" {
 }
 
 variable "max_size" {
-  description = "Maximum autoscaling group size"
+  description = "Maximum size of the autoscaling group"
   type        = number
 }
 
 variable "min_size" {
-  description = "Minimum autoscaling group size"
+  description = "Minimum size of the autoscaling group"
   type        = number
 }
 
 variable "desired_capacity" {
-  description = "Desired autoscaling group size"
+  description = "Desired capacity of the autoscaling group"
   type        = number
 }
 
 variable "tags" {
-  description = "Common resource tags"
+  description = "Common tags applied to all autoscaling resources"
   type        = map(string)
 }
