@@ -3,13 +3,18 @@ variable "vpc_id" {
   type        = string
 }
 
-variable "db_subnet_ids" {
-  description = "Database subnet IDs used by the RDS subnet group"
-  type        = list(string)
+variable "db_subnet_az_1_id" {
+  description = "Database subnet ID in AZ 1"
+  type        = string
+}
+
+variable "db_subnet_az_2_id" {
+  description = "Database subnet ID in AZ 2"
+  type        = string
 }
 
 variable "app_security_group_id" {
-  description = "Security group ID allowed to connect to the database"
+  description = "Application security group ID allowed to connect to the database"
   type        = string
 }
 
@@ -44,7 +49,7 @@ variable "db_instance_class" {
 }
 
 variable "allocated_storage" {
-  description = "Allocated storage in gibibytes"
+  description = "Allocated storage for the RDS instance"
   type        = number
 }
 

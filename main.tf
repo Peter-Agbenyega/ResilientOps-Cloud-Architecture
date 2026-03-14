@@ -91,7 +91,8 @@ module "rds" {
   source = "./rds"
 
   vpc_id                = module.vpc.vpc_id
-  db_subnet_ids         = [module.vpc.db_subnet_az_1_id, module.vpc.db_subnet_az_2_id]
+  db_subnet_az_1_id     = module.vpc.db_subnet_az_1_id
+  db_subnet_az_2_id     = module.vpc.db_subnet_az_2_id
   app_security_group_id = module.auto_scaling.security_group_id
 
   db_identifier       = var.db_identifier
