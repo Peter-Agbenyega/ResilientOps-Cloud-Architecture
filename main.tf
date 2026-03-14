@@ -53,8 +53,6 @@ module "ec2" {
 }
 
 # ALB MODULE
-# ALB MODULE
-# ALB MODULE
 module "alb" {
   source = "./alb"
 
@@ -64,6 +62,7 @@ module "alb" {
 
   tags = local.merged_tags
 }
+
 # AUTO SCALING MODULE
 module "auto_scaling" {
   source = "./auto-scaling"

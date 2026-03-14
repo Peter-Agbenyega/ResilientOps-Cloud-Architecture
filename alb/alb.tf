@@ -18,15 +18,6 @@ resource "aws_vpc_security_group_ingress_rule" "allow_http_for_alb" {
   to_port           = 80
 }
 
-# CREATING INBOUND RULE FOR HTTPS
-resource "aws_vpc_security_group_ingress_rule" "allow_https_for_alb" {
-  security_group_id = aws_security_group.app_alb_sg.id
-  cidr_ipv4         = "0.0.0.0/0"
-  from_port         = 443
-  ip_protocol       = "tcp"
-  to_port           = 443
-}
-
 # CREATING OUTBOUND RULE FOR ALB SECURITY GROUP
 resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv4_for_alb" {
   security_group_id = aws_security_group.app_alb_sg.id
@@ -75,6 +66,7 @@ resource "aws_lb" "app_alb" {
 }
 
 # CREATING ALB LISTENER FOR HTTP
+
 resource "aws_lb_listener" "http_listener" {
   load_balancer_arn = aws_lb.app_alb.arn
   port              = 80
