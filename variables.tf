@@ -29,32 +29,91 @@ variable "database_cidr_blocks" {
 }
 
 variable "ami_id" {
-  type = string
+  description = "AMI ID or SSM parameter path used by EC2 instances and the launch template"
+  type        = string
 }
 
 variable "instance_type" {
-  type    = string
-  default = "t2.micro"
+  description = "EC2 instance type used across bastion, private hosts, and application instances"
+  type        = string
+  default     = "t2.micro"
 }
 
 variable "key_name" {
-  type    = string
-  default = "cloudnexus360-key-pairs"
+  description = "EC2 key pair name for SSH-based access where applicable"
+  type        = string
+  default     = "cloudnexus360-key-pairs"
 }
 
 variable "desired_capacity" {
-  type    = number
-  default = 2
+  description = "Desired capacity for the autoscaling group"
+  type        = number
+  default     = 2
 }
 
 variable "max_size" {
-  type    = number
-  default = 3
+  description = "Maximum autoscaling group size"
+  type        = number
+  default     = 3
 }
 
 variable "min_size" {
-  type    = number
-  default = 1
+  description = "Minimum autoscaling group size"
+  type        = number
+  default     = 1
+}
+
+variable "db_identifier" {
+  description = "RDS instance identifier"
+  type        = string
+}
+
+variable "db_name" {
+  description = "Initial database name"
+  type        = string
+}
+
+variable "db_engine" {
+  description = "Database engine for the RDS instance"
+  type        = string
+}
+
+variable "db_engine_version" {
+  description = "Database engine version for the RDS instance"
+  type        = string
+}
+
+variable "db_instance_class" {
+  description = "RDS instance class"
+  type        = string
+}
+
+variable "db_allocated_storage" {
+  description = "Allocated storage in gibibytes for the RDS instance"
+  type        = number
+}
+
+variable "db_username" {
+  description = "Master username for the RDS instance"
+  type        = string
+}
+
+variable "db_password" {
+  description = "Master password for the RDS instance"
+  type        = string
+  sensitive   = true
+}
+
+variable "db_multi_az" {
+  description = "Enable Multi-AZ deployment for the RDS instance"
+  type        = bool
+  default     = false
+}
+
+variable "db_skip_final_snapshot" {
+  description = "Skip the final snapshot when the RDS instance is destroyed"
+  type        = bool
+  default     = true
 }
 
 variable "extra_tags" {
@@ -70,6 +129,7 @@ variable "bastion_allowed_cidr" {
 }
 
 variable "tags" {
-  type    = map(string)
-  default = {}
+  description = "Base tags applied to resources and used by naming conventions"
+  type        = map(string)
+  default     = {}
 }

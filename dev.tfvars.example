@@ -1,3 +1,14 @@
+#
+# Copy this file to dev.tfvars for local use only.
+# Keep real IP allowlists, credentials, and environment-specific values out of version control.
+#
+
+aws_region           = "us-east-1"
+ami_id               = "/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-6.1-x86_64"
+bastion_allowed_cidr = "203.0.113.10/32"
+instance_type        = "t3.micro"
+key_name             = "replace-with-your-key-pair"
+
 vpc_cidr_block = "10.0.0.0/16"
 
 public_cidr_blocks   = ["10.0.0.0/24",  "10.0.1.0/24"]
@@ -5,6 +16,20 @@ private_cidr_blocks  = ["10.0.10.0/24", "10.0.11.0/24"]
 database_cidr_blocks = ["10.0.20.0/24", "10.0.21.0/24"]
 
 availability_zones = ["us-east-1a", "us-east-1b"]
+
+max_size         = 3
+min_size         = 1
+desired_capacity = 2
+db_identifier    = "jupiter-dev-rds"
+db_name          = "jupiterapp"
+db_engine        = "mysql"
+db_engine_version      = "8.0"
+db_instance_class      = "db.t3.micro"
+db_allocated_storage   = 20
+db_username            = "admin"
+db_password            = "replace-with-strong-password"
+db_multi_az            = false
+db_skip_final_snapshot = true
 
 tags = {
   project     = "terraform-enterprise-lab"

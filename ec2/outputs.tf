@@ -1,19 +1,39 @@
+output "bastion_sg_id" {
+  description = "Security group ID for the bastion host"
+  value       = aws_security_group.bastion_sg.id
+}
+
 output "bastion_host_id" {
-  value = aws_instance.bastion_host.id
+  description = "ID of the bastion host"
+  value       = aws_instance.bastion_host.id
 }
 
 output "bastion_host_public_ip" {
-  value = aws_instance.bastion_host.public_ip
-}
-
-output "private_server_az1a_id" {
-  value = aws_instance.private_server_az1a.id
-}
-
-output "private_server_az1b_id" {
-  value = aws_instance.private_server_az1b.id
+  description = "Public IP address of the bastion host"
+  value       = aws_instance.bastion_host.public_ip
 }
 
 output "private_server_sg_id" {
-  value = aws_security_group.private_server_sg.id
+  description = "Security group ID for the private EC2 hosts"
+  value       = aws_security_group.private_server_sg.id
+}
+
+output "private_server_az_1_id" {
+  description = "ID of the first private EC2 host"
+  value       = aws_instance.private_server_az_1.id
+}
+
+output "private_server_az_2_id" {
+  description = "ID of the second private EC2 host"
+  value       = aws_instance.private_server_az_2.id
+}
+
+output "private_server_az1a_id" {
+  description = "Compatibility output for the private EC2 host in AZ 1"
+  value       = aws_instance.private_server_az_1.id
+}
+
+output "private_server_az1b_id" {
+  description = "Compatibility output for the private EC2 host in AZ 2"
+  value       = aws_instance.private_server_az_2.id
 }
