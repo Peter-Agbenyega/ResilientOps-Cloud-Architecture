@@ -82,3 +82,10 @@ module "auto_scaling" {
 
   tags = local.merged_tags
 }
+
+# IAM MODULE
+module "iam" {
+  source = "./iam"
+
+  tags = local.merged_tags
+}
