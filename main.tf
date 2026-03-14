@@ -53,17 +53,28 @@ module "ec2" {
 }
 
 # ALB MODULE
-# ALB MODULE
-# ALB MODULE
 module "alb" {
   source = "./alb"
 
   vpc_id                 = module.vpc.vpc_id
   public_subnet_az_2a_id = module.vpc.public_subnet_az_2a_id
   public_subnet_az_2b_id = module.vpc.public_subnet_az_2b_id
+  ssl_policy             = var.ssl_policy
+  ssl_certificate_arn    = var.ssl_certificate_arn
 
   tags = local.merged_tags
 }
+
+# ROUTE53 MODULE
+module "route53" {
+  source = "./route53"
+
+  route53_zone_id = var.route53_zone_id
+  domain_name     = var.domain_name
+  alb_dns_name    = module.alb.alb_dns_name
+  alb_zone_id     = module.alb.alb_zone_id
+}
+
 # AUTO SCALING MODULE
 module "auto_scaling" {
   source = "./auto-scaling"

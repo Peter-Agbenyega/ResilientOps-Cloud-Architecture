@@ -75,10 +75,30 @@ resource "aws_lb" "app_alb" {
 }
 
 # CREATING ALB LISTENER FOR HTTP
+
 resource "aws_lb_listener" "http_listener" {
   load_balancer_arn = aws_lb.app_alb.arn
   port              = 80
   protocol          = "HTTP"
+
+  default_action {
+    type = "redirect"
+
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
+  }
+}
+
+# CREATING A LOAD BALANCER LISTENER ON PORT 443
+resource "aws_lb_listener" "https_listener" {
+  load_balancer_arn = aws_lb.app_alb.arn
+  port              = 443
+  protocol          = "HTTPS"
+  ssl_policy        = var.ssl_policy
+  certificate_arn   = var.ssl_certificate_arn
 
   default_action {
     type             = "forward"
