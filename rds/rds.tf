@@ -11,6 +11,19 @@ locals {
     mysql    = 3306
     postgres = 5432
   }[var.db_engine]
+
+  db_secret_values = jsondecode(data.aws_secretsmanager_secret_version.db_secret_value.secret_string)
+}
+
+########################################
+# REFERENCING MYSQL RDS SECRET FROM AWS SECRETS MANAGER
+########################################
+data "aws_secretsmanager_secret" "db_secret" {
+  name = "jupiter_db_credentials"
+}
+
+data "aws_secretsmanager_secret_version" "db_secret_value" {
+  secret_id = data.aws_secretsmanager_secret.db_secret.id
 }
 
 ########################################
@@ -68,8 +81,8 @@ resource "aws_db_instance" "main" {
   engine_version         = var.db_engine_version
   instance_class         = var.db_instance_class
   allocated_storage      = var.allocated_storage
-  username               = var.db_username
-  password               = var.db_password
+  username               = local.db_secret_values["mySQL_Username"]
+  password               = local.db_secret_values["mySQL_password"]
   port                   = local.db_port
   db_subnet_group_name   = aws_db_subnet_group.db_subnet_group.name
   vpc_security_group_ids = [aws_security_group.rds_sg.id]
