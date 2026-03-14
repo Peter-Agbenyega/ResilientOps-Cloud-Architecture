@@ -1,10 +1,14 @@
 .terraform/
+.DS_Store
 *.tfstate
 *.tfstate.*
+*.tfstate.backup
 *.tfplan
 tfplan
 *.tfvars
 *.tfvars.json
+*.pem
+.terraform.tfstate.lock.info
 .terraformrc
 terraform.rc
 crash.log
@@ -17,3 +21,5 @@ override.tf.json
 bootstrap/.terraform/
 bootstrap/terraform.tfstate
 bootstrap/terraform.tfstate.backup
+dev.tfvars
+dev.ci.tfvars

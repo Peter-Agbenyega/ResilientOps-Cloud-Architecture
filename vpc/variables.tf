@@ -1,23 +1,29 @@
 variable "vpc_cidr_block" {
-  type = string
+  description = "CIDR block for the VPC"
+  type        = string
 }
 
 variable "public_cidr_blocks" {
-  type = list(string)
+  description = "CIDR blocks for public subnets"
+  type        = list(string)
 }
 
 variable "private_cidr_blocks" {
-  type = list(string)
+  description = "CIDR blocks for private subnets"
+  type        = list(string)
 }
 
 variable "database_cidr_blocks" {
-  type = list(string)
+  description = "CIDR blocks for database-ready subnets"
+  type        = list(string)
 }
 
 variable "availability_zones" {
-  type = list(string)
+  description = "Availability Zones used for multi-AZ placement"
+  type        = list(string)
 }
 
 variable "tags" {
-  type = map(string)
+  description = "Common resource tags"
+  type        = map(string)
 }

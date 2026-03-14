@@ -1,19 +1,24 @@
 output "security_group_id" {
-  value = aws_security_group.app_alb_sg.id
+  description = "Security group ID for the application load balancer"
+  value       = aws_security_group.app_alb_sg.id
 }
 
 output "jupiter_app_tg_arn" {
-  value = aws_lb_target_group.app_tg.arn
+  description = "ARN of the ALB target group"
+  value       = aws_lb_target_group.app_tg.arn
 }
 
 output "alb_dns_name" {
-  value = aws_lb.app_alb.dns_name
+  description = "DNS name of the application load balancer"
+  value       = aws_lb.app_alb.dns_name
 }
 
 output "alb_zone_id" {
-  value = aws_lb.app_alb.zone_id
+  description = "Route53 zone ID for the application load balancer"
+  value       = aws_lb.app_alb.zone_id
 }
 
 output "alb_arn" {
-  value = aws_lb.app_alb.arn
+  description = "ARN of the application load balancer"
+  value       = aws_lb.app_alb.arn
 }

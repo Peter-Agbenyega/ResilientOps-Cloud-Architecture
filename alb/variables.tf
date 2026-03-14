@@ -4,12 +4,12 @@ variable "vpc_id" {
 }
 
 variable "public_subnet_az_2a_id" {
-  description = "Public subnet ID in AZ2A"
+  description = "First public subnet ID used by the ALB"
   type        = string
 }
 
 variable "public_subnet_az_2b_id" {
-  description = "Public subnet ID in AZ2B"
+  description = "Second public subnet ID used by the ALB"
   type        = string
 }
 

@@ -21,7 +21,7 @@ provider "aws" {
   region = var.aws_region
 }
 
-# VPC MODULE
+# VPC module
 module "vpc" {
   source = "./vpc"
 
@@ -34,7 +34,7 @@ module "vpc" {
   tags = local.merged_tags
 }
 
-# EC2 MODULE (Bastion)
+# EC2 module for bastion and private hosts
 module "ec2" {
   source = "./ec2"
 
@@ -53,6 +53,8 @@ module "ec2" {
 }
 
 # ALB MODULE
+# ALB MODULE
+# ALB MODULE
 module "alb" {
   source = "./alb"
 
@@ -62,7 +64,6 @@ module "alb" {
 
   tags = local.merged_tags
 }
-
 # AUTO SCALING MODULE
 module "auto_scaling" {
   source = "./auto-scaling"

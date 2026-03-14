@@ -1,39 +1,49 @@
 variable "vpc_id" {
-  type = string
+  description = "VPC ID for EC2 resources"
+  type        = string
 }
 
 variable "public_subnet_az_1_id" {
-  type = string
+  description = "Public subnet ID for the bastion host"
+  type        = string
 }
 
 variable "private_subnet_az_1_id" {
-  type = string
+  description = "Private subnet ID for the first private host"
+  type        = string
 }
 
 variable "private_subnet_az_2_id" {
-  type = string
+  description = "Private subnet ID for the second private host"
+  type        = string
 }
 
 variable "vpc_cidr_block" {
-  type = string
+  description = "CIDR block of the parent VPC"
+  type        = string
 }
 
 variable "tags" {
-  type = map(string)
+  description = "Common resource tags"
+  type        = map(string)
 }
 
 variable "bastion_allowed_cidr" {
-  type = string
+  description = "CIDR allowed to SSH into the bastion host"
+  type        = string
 }
 
 variable "ami_id" {
-  type = string
+  description = "AMI identifier retained for interface consistency with the root module"
+  type        = string
 }
 
 variable "instance_type" {
-  type = string
+  description = "EC2 instance type for bastion and private hosts"
+  type        = string
 }
 
 variable "key_name" {
-  type = string
+  description = "EC2 key pair name used for SSH access"
+  type        = string
 }

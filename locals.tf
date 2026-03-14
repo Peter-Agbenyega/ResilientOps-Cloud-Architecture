@@ -4,7 +4,7 @@
 
 locals {
 
-  # Base project tags (class convention style)
+  # Base tags applied consistently across the reference architecture.
   project_tags = {
     contact     = "admin@nexuscloud360.com"
     owner       = "peter"
@@ -13,6 +13,6 @@ locals {
     environment = terraform.workspace
   }
 
-  # Merge base tags with optional extra tags
+  # Preserve the existing tag namespace to avoid unnecessary naming churn.
   merged_tags = merge(local.project_tags, var.extra_tags)
 }
