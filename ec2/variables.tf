@@ -1,35 +1,35 @@
 variable "vpc_id" {
-  description = "VPC ID for EC2 resources"
+  description = "VPC ID where the EC2 resources will be created"
   type        = string
 }
 
 variable "public_subnet_az_1_id" {
-  description = "Public subnet ID for the bastion host"
+  description = "Public subnet ID used for the bastion host"
   type        = string
 }
 
 variable "private_subnet_az_1_id" {
-  description = "Private subnet ID for the first private host"
+  description = "Private subnet ID used for the private server in AZ 1"
   type        = string
 }
 
 variable "private_subnet_az_2_id" {
-  description = "Private subnet ID for the second private host"
+  description = "Private subnet ID used for the private server in AZ 2"
   type        = string
 }
 
 variable "vpc_cidr_block" {
-  description = "CIDR block of the parent VPC"
+  description = "CIDR block of the VPC for internal traffic rules"
   type        = string
 }
 
 variable "tags" {
-  description = "Common resource tags"
+  description = "Common tags applied to all EC2 resources"
   type        = map(string)
 }
 
 variable "bastion_allowed_cidr" {
-  description = "CIDR allowed to SSH into the bastion host"
+  description = "CIDR block allowed to SSH into the bastion host"
   type        = string
 }
 
@@ -39,7 +39,7 @@ variable "ami_id" {
 }
 
 variable "instance_type" {
-  description = "EC2 instance type for bastion and private hosts"
+  description = "EC2 instance type used for the bastion host and private servers"
   type        = string
 }
 

@@ -1,16 +1,20 @@
-# ec2/ec2.tf
-
 ########################################
 # EC2 MODULE
-# - Bastion Host (public subnet AZ1A)
-# - Private Server AZ1A
-# - Private Server AZ1B
+# - Bastion host in the public subnet
+# - Private server instances across 2 private subnets
+# - Security group rules for controlled SSH and internal VPC access
 ########################################
 
+########################################
+# REFERENCING BASTION HOST AMI
+########################################
 data "aws_ssm_parameter" "bastion_ami" {
   name = "/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-6.1-x86_64"
 }
 
+########################################
+# CREATING SECURITY GROUP FOR BASTION HOST
+########################################
 resource "aws_security_group" "bastion_sg" {
   name        = "${var.tags["project"]}-${var.tags["application"]}-${var.tags["environment"]}-bastion-sg"
   description = "Security group for bastion host"
@@ -37,6 +41,9 @@ resource "aws_security_group" "bastion_sg" {
   })
 }
 
+########################################
+# CREATING BASTION HOST INSTANCE
+########################################
 resource "aws_instance" "bastion_host" {
   ami                         = data.aws_ssm_parameter.bastion_ami.value
   instance_type               = var.instance_type
@@ -50,6 +57,9 @@ resource "aws_instance" "bastion_host" {
   })
 }
 
+########################################
+# CREATING SECURITY GROUP FOR PRIVATE SERVERS
+########################################
 resource "aws_security_group" "private_server_sg" {
   name        = "${var.tags["project"]}-${var.tags["application"]}-${var.tags["environment"]}-private-server-sg"
   description = "Private server security group"
@@ -60,6 +70,9 @@ resource "aws_security_group" "private_server_sg" {
   })
 }
 
+########################################
+# CREATING INBOUND RULE TO ALLOW SSH FROM BASTION HOST
+########################################
 resource "aws_security_group_rule" "private_server_ssh_from_bastion" {
   type                     = "ingress"
   from_port                = 22
@@ -69,6 +82,9 @@ resource "aws_security_group_rule" "private_server_ssh_from_bastion" {
   source_security_group_id = aws_security_group.bastion_sg.id
 }
 
+########################################
+# CREATING INBOUND RULE TO ALLOW INTERNAL VPC TRAFFIC
+########################################
 resource "aws_security_group_rule" "private_server_internal_vpc" {
   type              = "ingress"
   from_port         = 0
@@ -78,6 +94,9 @@ resource "aws_security_group_rule" "private_server_internal_vpc" {
   cidr_blocks       = [var.vpc_cidr_block]
 }
 
+########################################
+# CREATING OUTBOUND RULE FOR PRIVATE SERVER SECURITY GROUP
+########################################
 resource "aws_security_group_rule" "private_server_egress_all" {
   type              = "egress"
   from_port         = 0
@@ -87,7 +106,10 @@ resource "aws_security_group_rule" "private_server_egress_all" {
   cidr_blocks       = ["0.0.0.0/0"]
 }
 
-resource "aws_instance" "private_server_az1a" {
+########################################
+# CREATING PRIVATE SERVER INSTANCE IN AZ 1
+########################################
+resource "aws_instance" "private_server_az_1" {
   ami                         = data.aws_ssm_parameter.bastion_ami.value
   instance_type               = var.instance_type
   key_name                    = var.key_name
@@ -96,11 +118,14 @@ resource "aws_instance" "private_server_az1a" {
   associate_public_ip_address = false
 
   tags = merge(var.tags, {
-    Name = "${var.tags["project"]}-${var.tags["application"]}-${var.tags["environment"]}-private-server-az1a"
+    Name = "${var.tags["project"]}-${var.tags["application"]}-${var.tags["environment"]}-private-server-az-1"
   })
 }
 
-resource "aws_instance" "private_server_az1b" {
+########################################
+# CREATING PRIVATE SERVER INSTANCE IN AZ 2
+########################################
+resource "aws_instance" "private_server_az_2" {
   ami                         = data.aws_ssm_parameter.bastion_ami.value
   instance_type               = var.instance_type
   key_name                    = var.key_name
@@ -109,6 +134,6 @@ resource "aws_instance" "private_server_az1b" {
   associate_public_ip_address = false
 
   tags = merge(var.tags, {
-    Name = "${var.tags["project"]}-${var.tags["application"]}-${var.tags["environment"]}-private-server-az1b"
+    Name = "${var.tags["project"]}-${var.tags["application"]}-${var.tags["environment"]}-private-server-az-2"
   })
 }
