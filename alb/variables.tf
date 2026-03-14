@@ -17,3 +17,12 @@ variable "tags" {
   description = "Common tags for resources"
   type        = map(string)
 }
+variable "ssl_certificate_arn" {
+  description = "ARN of the ACM SSL certificate"
+  type        = string
+}
+
+variable "ssl_policy" {
+  type = string
+}
+

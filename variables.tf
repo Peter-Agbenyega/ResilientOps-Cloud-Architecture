@@ -73,3 +73,20 @@ variable "tags" {
   type    = map(string)
   default = {}
 }
+
+
+variable "ssl_policy" {
+  type = string
+}
+
+variable "ssl_certificate_arn" {
+  type = string
+}
+
+variable "route53_zone_id" {
+  type = string
+}
+
+variable "domain_name" {
+  type = string
+}
