@@ -34,13 +34,6 @@ Resources are distributed across multiple Availability Zones to improve resilien
 
 ## Architecture Flow
 
-### Visual Architecture Diagram
-
-### Visual Architecture Diagram
-
-See the architecture diagram here:
-
-[ResilientOps Architecture Diagram](docs/diagrams/resilientops-architecture.md)
 ```text
 Internet
    |
@@ -57,17 +50,19 @@ Auto Scaling Group
 Application EC2 Instances
    |
    v
-Database Subnets
-```
+Database SubnetsArchitecture DiagramThis layered design separates internet-facing infrastructure from internal workloads and database-ready network space, improving security and operational resilience.
 
-This layered design separates internet-facing infrastructure from internal workloads and database-ready network space, improving security and operational resilience.
+⸻
 
----
+Additional Documentation
 
-## Project Structure
+See detailed architecture notes here:
 
-```text
-ResilientOps-Cloud-Architecture/
+ResilientOps Architecture Notes￼
+
+⸻
+
+Project StructureResilientOps-Cloud-Architecture/
 ├── vpc/
 │   ├── vpc.tf
 │   ├── variables.tf
@@ -84,10 +79,19 @@ ResilientOps-Cloud-Architecture/
 │   ├── auto-scaling.tf
 │   ├── variables.tf
 │   └── outputs.tf
+├── iam/
+│   ├── iam.tf
+│   ├── variables.tf
+│   └── outputs.tf
 ├── route53/
 │   ├── route53.tf
 │   ├── variables.tf
 │   └── outputs.tf
+├── docs/
+│   ├── architecture/
+│   │   └── resilientops-architecture.md
+│   └── diagrams/
+│       └── resilientops-architecture.png
 ├── bootstrap/
 ├── .github/
 │   └── workflows/
@@ -99,120 +103,121 @@ ResilientOps-Cloud-Architecture/
 ├── outputs.tf
 ├── locals.tf
 ├── dev.ci.tfvars
-└── README.md
-```
+└── README.mdThe repository uses Terraform modules so that networking, compute, load balancing, and scaling logic can be maintained independently and reused more easily.
 
-The repository uses Terraform modules so that networking, compute, load balancing, and scaling logic can be maintained independently and reused more easily.
+⸻
 
----
+Technologies Used
+	•	Terraform
+	•	Amazon Web Services (AWS)
+	•	Git
+	•	GitHub
+	•	GitHub Actions
+	•	Infrastructure as Code (IaC)
 
-## Technologies Used
+AWS Services Represented
+	•	VPC
+	•	EC2
+	•	Application Load Balancer
+	•	Auto Scaling
+	•	NAT Gateway
+	•	Route Tables
+	•	Security Groups
+	•	Internet Gateway
+	•	Route 53 module structure
+	•	S3 and DynamoDB for Terraform remote state backend configuration
 
-- Terraform
-- Amazon Web Services (AWS)
-- Git
-- GitHub
-- GitHub Actions
-- Infrastructure as Code (IaC)
+⸻
 
-### AWS Services Represented
+Terraform Practices Demonstrated
 
-- VPC
-- EC2
-- Application Load Balancer
-- Auto Scaling
-- NAT Gateway
-- Route Tables
-- Security Groups
-- Internet Gateway
-- Route 53 module structure
-- S3 and DynamoDB for Terraform remote state backend configuration
-
----
-
-## Terraform Practices Demonstrated
-
-### Modular Infrastructure Design
+Modular Infrastructure Design
 
 Infrastructure is split into reusable modules, including:
-
-- `module "vpc"`
-- `module "ec2"`
-- `module "alb"`
-- `module "auto_scaling"`
-- `module "iam"`
+	•	module "vpc"
+	•	module "ec2"
+	•	module "alb"
+	•	module "auto_scaling"
+	•	module "iam"
 
 This modular approach improves maintainability, supports reuse, and makes changes easier to review.
 
-### Centralized Tagging Strategy
+Centralized Tagging Strategy
 
-The project defines shared resource tags in [`locals.tf`](/Users/peterchristianagbenyega/Desktop/github-projects/ResilientOps-Cloud-Architecture/locals.tf), then merges optional extra tags for consistency across environments.
+The project defines shared resource tags in locals.tf￼, then merges optional extra tags for consistency across environments.
 
 This supports governance, cost allocation, and cleaner resource management.
 
-### Remote State Configuration
+Remote State Configuration
 
 Terraform is configured to use an AWS S3 backend with DynamoDB state locking, which reflects a team-oriented workflow for safer infrastructure changes.
 
----
+⸻
 
-## CI Pipeline
+Design Decisions
+
+Why Public and Private Subnets
+
+Public subnets are used for infrastructure that must receive internet traffic, while private subnets are used for internal workloads that should not be directly exposed. This separation improves security and follows common cloud architecture practices.
+
+Why an Application Load Balancer
+
+The Application Load Balancer provides a controlled entry point for inbound traffic and supports distribution of requests across application instances. This improves availability and supports future scaling.
+
+Why Auto Scaling
+
+Auto Scaling helps the architecture respond to workload changes by increasing or decreasing compute capacity as needed. This supports resilience and efficient infrastructure use.
+
+Why a Bastion Host
+
+The bastion host provides controlled administrative access to internal compute resources. This reduces the need to expose private instances directly to the internet.
+
+⸻
+
+CI Pipeline
 
 This repository includes GitHub Actions workflows that validate Terraform changes as part of the DevOps workflow.
 
 Validation steps include:
-
-- `terraform fmt`
-- `terraform validate`
-- `terraform plan`
+	•	terraform fmt
+	•	terraform validate
+	•	terraform plan
 
 This helps catch formatting issues and configuration errors before deployment.
 
----
+⸻
 
-## Deployment Workflow
+Deployment Workflow
 
-Typical local workflow:
-
-```bash
-terraform init
+Typical local workflow:terraform init
 terraform fmt -recursive
 terraform validate
 terraform plan -var-file=dev.ci.tfvars
-terraform apply -var-file=dev.ci.tfvars
-```
+terraform apply -var-file=dev.ci.tfvarsTo avoid unnecessary AWS costs after testing:terraform destroy -var-file=dev.ci.tfvarsPrerequisites:
+	•	Terraform
+	•	AWS CLI
+	•	Git
+	•	Configured AWS credentials
 
-To avoid unnecessary AWS costs after testing:
+⸻
 
-```bash
-terraform destroy -var-file=dev.ci.tfvars
-```
+Verification Commands
 
-Prerequisites:
-
-- Terraform
-- AWS CLI
-- Git
-- Configured AWS credentials
-
----
-
-## DevOps Value
+Check EC2 instances:aws ec2 describe-instances --region us-east-1Check NAT Gateways:aws ec2 describe-nat-gateways --region us-east-1Check VPCs:aws ec2 describe-vpcs --region us-east-1DevOps Value
 
 This project highlights practical DevOps and platform engineering habits:
-
-- Infrastructure as Code with Terraform
-- Reusable modular architecture
-- Git-based change management
-- CI-driven validation before deployment
-- Environment-oriented configuration with tfvars
-- Consistent tagging and infrastructure organization
+	•	Infrastructure as Code with Terraform
+	•	Reusable modular architecture
+	•	Git-based change management
+	•	CI-driven validation before deployment
+	•	Environment-oriented configuration with tfvars
+	•	Consistent tagging and infrastructure organization
 
 It is designed as a portfolio-ready example of how cloud infrastructure can be structured for clarity, repeatability, and operational discipline.
 
----
+⸻
 
-## National Interest Relevance
+National Interest Relevance
 
 Reliable and secure cloud infrastructure is foundational to modern digital services across public and private sectors.
 
@@ -220,11 +225,11 @@ This project demonstrates repeatable architecture patterns that help reduce misc
 
 Its relevance is in showing how cloud environments can be built with stronger operational controls, clearer separation of responsibilities, and more dependable deployment workflows.
 
----
+⸻
 
-## Author
+Author
 
-Peter Christian Agbenyega  
+Peter Christian Agbenyega
 Cloud Security & DevSecOps Engineer
 
-GitHub: <https://github.com/Peter-Agbenyega>
+GitHub: https://github.com/Peter-Agbenyega￼
