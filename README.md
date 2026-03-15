@@ -34,6 +34,12 @@ Resources are distributed across multiple Availability Zones to improve resilien
 
 ## Architecture Flow
 
+### Visual Architecture Diagram
+
+See the architecture diagram below:
+
+![ResilientOps Architecture Diagram](docs/diagrams/resilientops-architecture.md)
+
 ```text
 Internet
    |
