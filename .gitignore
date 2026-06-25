@@ -16,4 +16,4 @@ override.tf.json
 # Terraform bootstrap local artifacts (never commit)
 bootstrap/.terraform/
 bootstrap/terraform.tfstate
-bootstrap/terraform.tfstate.backup
+bootstrap/terraform.tfstate.backupAPI-SECRET-KEY/
