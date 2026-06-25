@@ -4,6 +4,18 @@ Enterprise-grade AWS Infrastructure as Code reference architecture built using T
 
 This project demonstrates how resilient cloud infrastructure environments are designed, automated, and validated using modern DevOps and Infrastructure-as-Code practices.
 
+
+## Related Technical Writing
+
+This repository connects to public technical writing on secure cloud foundations for small and under-resourced organizations.
+
+For background and implementation context, see:
+
+- [Secure Cloud Baseline for Small and Under-Resourced Organizations](https://petercagbenyega.com/blog/secure-cloud-baseline-small-organizations.html)
+- [Why Small Organizations Need Secure-by-Design Cloud Architecture Before They Scale](https://petercagbenyega.com/blog/why-small-organizations-need-secure-by-design-cloud-architecture.html)
+
+These articles explain the security baseline and secure-by-design architecture principles that this Terraform reference project helps demonstrate.
+
 ---
 
 ## Architecture Overview
@@ -217,7 +229,7 @@ It is designed as a portfolio-ready example of how cloud infrastructure can be s
 
 ⸻
 
-National Interest Relevance
+Public-Interest Technical Value
 
 Reliable and secure cloud infrastructure is foundational to modern digital services across public and private sectors.
 
@@ -232,4 +244,7 @@ Author
 Peter Christian Agbenyega
 Cloud Security & DevSecOps Engineer
 
-GitHub: https://github.com/Peter-Agbenyega￼
+GitHub: https://github.com/Peter-Agbenyega
+
+This project is part of Peter Christian Agbenyega's public cloud security reference work focused on resilient AWS architecture, DevSecOps practices, and practical secure cloud foundations.
+￼
